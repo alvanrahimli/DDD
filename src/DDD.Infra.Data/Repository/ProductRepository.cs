@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using DDD.Domain.Interfaces;
 using DDD.Domain.Models;
@@ -17,6 +19,11 @@ namespace DDD.Infra.Data.Repository
         public Product GetByName(string name)
         {
             return _context.Products.FirstOrDefault(p => p.Name == name);
+        }
+
+        public IEnumerable<Product> GetByIds(List<Guid> productIds)
+        {
+            return _context.Products.Where(p => productIds.Contains(p.Id)).ToList();
         }
     }
 }

@@ -2,6 +2,7 @@ using DDD.Application.Interfaces;
 using DDD.Application.Services;
 using DDD.Domain.CommandHandlers;
 using DDD.Domain.Commands;
+using DDD.Domain.Commands.Order;
 using DDD.Domain.Commands.Product;
 using DDD.Domain.Core.Bus;
 using DDD.Domain.Core.Events;
@@ -39,6 +40,7 @@ namespace DDD.Infra.CrossCutting.IoC
             // Application
             services.AddScoped<ICustomerAppService, CustomerAppService>();
             services.AddScoped<IProductAppService, ProductAppService>();
+            services.AddScoped<IOrderAppService, OrderAppService>();
 
             // Domain - Events
             services.AddScoped<INotificationHandler<DomainNotification>, DomainNotificationHandler>();
@@ -51,10 +53,13 @@ namespace DDD.Infra.CrossCutting.IoC
             services.AddScoped<IRequestHandler<UpdateCustomerCommand, bool>, CustomerCommandHandler>();
             services.AddScoped<IRequestHandler<RemoveCustomerCommand, bool>, CustomerCommandHandler>();
             services.AddScoped<IRequestHandler<AddNewProductCommand, bool>, ProductCommandHandler>();
+            services.AddScoped<IRequestHandler<AddNewOrderCommand, bool>, OrderCommandHandler>();
 
             // Infra - Data
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Infra - Data EventSourcing
