@@ -71,7 +71,7 @@ namespace DDD.Services.Api.Controllers
             // Get User
             var appUser = await _userManager.FindByEmailAsync(model.Email);
 
-            _logger.LogInformation(1, "User logged in.");
+            _logger.LogInformation(1, "User logged in");
             return Response(await GenerateToken(appUser));
         }
 

@@ -1,5 +1,6 @@
 using DDD.Domain.Interfaces;
 using DDD.Infra.Data.Context;
+using DDD.Infra.Data.Repository;
 
 namespace DDD.Infra.Data.UoW
 {
@@ -11,6 +12,8 @@ namespace DDD.Infra.Data.UoW
         {
             _context = context;
         }
+
+        public IProductRepository ProductRepository => new ProductRepository(_context);
 
         public bool Commit()
         {

@@ -12,6 +12,8 @@ namespace DDD.Application.AutoMapper
                 .ConstructUsing(c => new RegisterNewCustomerCommand(c.FirstName, c.LastName, c.Address, c.PostalCode, c.Email, c.BirthDate));
             CreateMap<CustomerViewModel, UpdateCustomerCommand>()
                 .ConstructUsing(c => new UpdateCustomerCommand(c.Id, c.FirstName, c.LastName, c.Address, c.PostalCode, c.Email, c.BirthDate));
+            CreateMap<ProductViewModel, AddNewProductCommand>()
+                .ConstructUsing(p => new AddNewProductCommand(p.Name, p.Price));
         }
     }
 }

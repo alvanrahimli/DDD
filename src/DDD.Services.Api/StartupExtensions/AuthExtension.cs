@@ -1,4 +1,7 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using DDD.Infra.CrossCutting.Identity.Authorization;
 using DDD.Infra.CrossCutting.Identity.Data;
@@ -86,6 +89,17 @@ namespace DDD.Services.Api.StartupExtensions
         {
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.Use(async (context, next) =>
+            {
+                if (context.User.Identity?.IsAuthenticated ?? false)
+                {
+                    var userId = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                    context.Request.Headers.Add("User-Id", userId);
+                }
+
+                await next();
+            });
 
             return app;
         }

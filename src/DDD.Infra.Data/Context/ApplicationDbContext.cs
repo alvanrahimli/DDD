@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using DDD.Domain.Core.Models;
 using DDD.Domain.Models;
 using DDD.Infra.Data.Mappings;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -13,11 +15,20 @@ namespace DDD.Infra.Data.Context
 {
     public class ApplicationDbContext : DbContext
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
+            IHttpContextAccessor httpContextAccessor) : base(options)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,8 +61,7 @@ namespace DDD.Infra.Data.Context
         private void UpdateSoftDelete(List<EntityEntry> entries)
         {
             var filtered = entries
-                .Where(x => x.State == EntityState.Added
-                    || x.State == EntityState.Deleted);
+                .Where(x => x.State is EntityState.Added or EntityState.Deleted);
 
             foreach (var entry in filtered)
             {
@@ -75,7 +85,7 @@ namespace DDD.Infra.Data.Context
                     || x.State == EntityState.Modified);
 
             // TODO: Get real current user id
-            var currentUserId = 1;
+            var currentUserId = _httpContextAccessor.HttpContext?.Request.Headers["User-Id"].FirstOrDefault();
 
             foreach (var entry in filtered)
             {
