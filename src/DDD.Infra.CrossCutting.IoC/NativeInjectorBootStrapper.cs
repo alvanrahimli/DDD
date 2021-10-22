@@ -2,6 +2,7 @@ using DDD.Application.Interfaces;
 using DDD.Application.Services;
 using DDD.Domain.CommandHandlers;
 using DDD.Domain.Commands;
+using DDD.Domain.Commands.Product;
 using DDD.Domain.Core.Bus;
 using DDD.Domain.Core.Events;
 using DDD.Domain.Core.Notifications;
@@ -53,6 +54,7 @@ namespace DDD.Infra.CrossCutting.IoC
 
             // Infra - Data
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Infra - Data EventSourcing

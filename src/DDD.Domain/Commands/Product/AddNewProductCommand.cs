@@ -1,6 +1,6 @@
 using DDD.Domain.Validations.Product;
 
-namespace DDD.Domain.Commands
+namespace DDD.Domain.Commands.Product
 {
     public class AddNewProductCommand : ProductCommand
     {

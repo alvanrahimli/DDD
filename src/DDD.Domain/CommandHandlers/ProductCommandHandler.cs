@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DDD.Domain.Commands;
+using DDD.Domain.Commands.Product;
 using DDD.Domain.Core.Bus;
 using DDD.Domain.Core.Notifications;
 using DDD.Domain.Interfaces;
@@ -10,7 +11,8 @@ using MediatR;
 namespace DDD.Domain.CommandHandlers
 {
     public class ProductCommandHandler : CommandHandler,
-        IRequestHandler<AddNewProductCommand, bool>
+        IRequestHandler<AddNewProductCommand, bool>,
+        IRequestHandler<UpdateProductCommand, bool>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMediatorHandler _bus;
@@ -42,6 +44,34 @@ namespace DDD.Domain.CommandHandlers
             var product = new Product(request.Name, request.Price);
             _uow.ProductRepository.Add(product);
 
+            if (!Commit())
+            {
+                await _bus.RaiseEvent(new DomainNotification(request.MessageType, "Could not save product data"));
+                return await Task.FromResult(false);
+            }
+
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        {
+            if (!request.IsValid())
+            {
+                NotifyValidationErrors(request);
+                return false;
+            }
+
+            var existingProduct = _uow.ProductRepository.GetById(request.Id);
+            if (existingProduct == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification(request.MessageType, "User by id not found"));
+                return await Task.FromResult(false);
+            }
+
+            existingProduct.Name = request.Name;
+            existingProduct.Price = request.Price;
+
+            _uow.ProductRepository.Update(existingProduct);
             if (!Commit())
             {
                 await _bus.RaiseEvent(new DomainNotification(request.MessageType, "Could not save product data"));

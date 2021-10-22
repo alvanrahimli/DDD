@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DDD.Services.Api.Controllers
 {
+    [Authorize]
     public class ProductController : ApiController
     {
         private readonly IMediatorHandler _mediator;
@@ -21,9 +22,15 @@ namespace DDD.Services.Api.Controllers
             _productAppService = productAppService;
         }
 
+        [HttpGet("products")]
+        public IActionResult GetProducts()
+        {
+            return Response(_productAppService.GetAll());
+        }
+
         [HttpPost]
-        [AllowAnonymous]
         [Route("products")]
+        [Authorize(Policy = "CanWriteProductData")]
         public IActionResult AddProduct([FromBody] ProductViewModel product)
         {
             if (!ModelState.IsValid)
@@ -33,6 +40,20 @@ namespace DDD.Services.Api.Controllers
             }
 
             _productAppService.Add(product);
+            return Response(product);
+        }
+
+        [HttpPut("products")]
+        [Authorize(Policy = "CanWriteProductData")]
+        public IActionResult UpdateProduct([FromBody] ProductViewModel product)
+        {
+            if (!ModelState.IsValid)
+            {
+                NotifyModelStateErrors();
+                return Response(product);
+            }
+
+            _productAppService.Update(product);
             return Response(product);
         }
     }

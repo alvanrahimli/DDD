@@ -78,8 +78,14 @@ namespace DDD.Services.Api.StartupExtensions
                     .RequireRole("Admin")
                     .AddRequirements(new ClaimRequirement("Customers_Remove", "Remove"))
                     .Build();
+                var policy3 = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireRole("Admin")
+                    .AddRequirements(new ClaimRequirement("Products_Write", "Write"))
+                    .Build();
                 options.AddPolicy("CanWriteCustomerData", policy1);
                 options.AddPolicy("CanRemoveCustomerData", policy2);
+                options.AddPolicy("CanWriteProductData", policy3);
             });
 
             return services;
