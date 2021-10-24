@@ -59,15 +59,16 @@ namespace DDD.Domain.CommandHandlers
             }
 
             var orderItems = request.OrderItems.Select(oi => new OrderItem(oi.ProductId, oi.Count)).ToList();
-
             var totalPrice = products.Sum(p => p.Price * orderItems.FirstOrDefault(oi => oi.ProductId == p.Id)?.Count);
 
             var order = new Order(totalPrice ?? 0)
             {
                 CustomerId = request.CustomerId,
-                OrderItems = orderItems
             };
             _orderRepository.Add(order);
+
+            orderItems.ForEach(oi => oi.OrderId = order.Id);
+            _orderItemRepository.AddRange(orderItems);
 
             if (!Commit())
             {

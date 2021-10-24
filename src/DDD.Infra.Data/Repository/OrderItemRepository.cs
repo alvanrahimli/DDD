@@ -23,7 +23,7 @@ namespace DDD.Infra.Data.Repository
 
         public void AddRange(List<OrderItem> obj)
         {
-            throw new NotImplementedException();
+            _context.OrderItems.AddRange(obj);
         }
     }
 }

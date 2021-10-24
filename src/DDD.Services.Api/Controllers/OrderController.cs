@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DDD.Application.Interfaces;
 using DDD.Application.ViewModels;
@@ -25,7 +26,7 @@ namespace DDD.Services.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("add-order")]
+        [HttpPost("order")]
         [Authorize(Policy = "CanWriteOrderData")]
         public IActionResult AddOrder(OrderViewModel orderViewModel)
         {
@@ -37,6 +38,13 @@ namespace DDD.Services.Api.Controllers
 
             _orderAppService.Add(orderViewModel);
             return Response(orderViewModel);
+        }
+
+        [HttpDelete("order/{id:guid}")]
+        public IActionResult DeleteOrder(Guid id)
+        {
+            _orderAppService.Delete(id);
+            return Response();
         }
     }
 }

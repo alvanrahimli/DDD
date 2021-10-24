@@ -33,5 +33,10 @@ namespace DDD.Application.Services
         {
             _bus.SendCommand(new AddNewOrderCommand(orderViewModel.CustomerId, orderViewModel.OrderItems));
         }
+
+        public void Delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
