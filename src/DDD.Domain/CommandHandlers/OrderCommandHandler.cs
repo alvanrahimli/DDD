@@ -13,7 +13,8 @@ using Microsoft.AspNetCore.Http;
 namespace DDD.Domain.CommandHandlers
 {
     public class OrderCommandHandler : CommandHandler,
-        IRequestHandler<AddNewOrderCommand, bool>
+        IRequestHandler<AddNewOrderCommand, bool>,
+        IRequestHandler<DeleteOrderCommand, bool>
     {
         private readonly IUnitOfWork _uow;
         private readonly IMediatorHandler _bus;
@@ -69,6 +70,26 @@ namespace DDD.Domain.CommandHandlers
 
             orderItems.ForEach(oi => oi.OrderId = order.Id);
             _orderItemRepository.AddRange(orderItems);
+
+            if (!Commit())
+            {
+                await _bus.RaiseEvent(new DomainNotification(request.MessageType, "Could not save order data"));
+                return await Task.FromResult(false);
+            }
+
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
+        {
+            var order = _orderRepository.GetById(request.OrderId);
+            if (order == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification(request.MessageType, "Could not find order"));
+                return await Task.FromResult(false);
+            }
+
+            _orderRepository.Remove(order.Id);
 
             if (!Commit())
             {

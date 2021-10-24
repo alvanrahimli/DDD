@@ -54,6 +54,7 @@ namespace DDD.Infra.CrossCutting.IoC
             services.AddScoped<IRequestHandler<RemoveCustomerCommand, bool>, CustomerCommandHandler>();
             services.AddScoped<IRequestHandler<AddNewProductCommand, bool>, ProductCommandHandler>();
             services.AddScoped<IRequestHandler<AddNewOrderCommand, bool>, OrderCommandHandler>();
+            services.AddScoped<IRequestHandler<DeleteOrderCommand, bool>, OrderCommandHandler>();
 
             // Infra - Data
             services.AddScoped<ICustomerRepository, CustomerRepository>();

@@ -28,16 +28,16 @@ namespace DDD.Services.Api.Controllers
 
         [HttpPost("order")]
         [Authorize(Policy = "CanWriteOrderData")]
-        public IActionResult AddOrder(OrderViewModel orderViewModel)
+        public IActionResult AddOrder(OrderDto newOrder)
         {
             if (!ModelState.IsValid)
             {
                 NotifyModelStateErrors();
-                return Response(orderViewModel);
+                return Response(newOrder);
             }
 
-            _orderAppService.Add(orderViewModel);
-            return Response(orderViewModel);
+            _orderAppService.Add(newOrder);
+            return Response(newOrder);
         }
 
         [HttpDelete("order/{id:guid}")]
@@ -45,6 +45,13 @@ namespace DDD.Services.Api.Controllers
         {
             _orderAppService.Delete(id);
             return Response();
+        }
+
+        [HttpGet]
+        public IActionResult GetOrders(int skip, int take)
+        {
+            var orders = _orderAppService.GetOrders(skip, take);
+            return Response(orders);
         }
     }
 }

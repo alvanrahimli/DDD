@@ -48,6 +48,7 @@ namespace DDD.Services.Api
             services.AddControllers()
                 .AddJsonOptions(x => {
                     x.JsonSerializerOptions.IgnoreNullValues = true;
+                    // x.JsonSerializerOptions.MaxDepth = 3;
                 });
         }
 
